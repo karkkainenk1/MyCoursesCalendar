@@ -1,5 +1,5 @@
 # MyCoursesCalendar
-This application improves the ics file given by MyCourses
+This application improves the ics file given by MyCourses by making the event name more descriptive (e.g. "T-61.3050 L1, T1 (Machine Learning: Basic Principles)"). The output file can be imported to Google Calendar for example.
 
 ## Installation
 Before using this script you should install BeautifulSoup (pip install beautifulsoup4) and iCalendar (https://github.com/collective/icalendar/blob/master/docs/install.rst) python packages, and clone this repository to your local machine.
