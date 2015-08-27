@@ -9,13 +9,14 @@ ignore_problem_sessions = True
 output_file_name = 'output.ics'
 ##################
 
-cal_text = urllib2.urlopen(calendar_url).read()
-cal_input = Calendar.from_ical(cal_text, True)
-cal_output = Calendar()
 
 course_names = {}
 
 def main():
+    cal_text = urllib2.urlopen(calendar_url).read()
+    cal_input = Calendar.from_ical(cal_text, True)
+    cal_output = Calendar()
+    
     for event in cal_input[0].walk('vevent'):
         event_type = parse_event_type(event)
         if should_ignore_event_type(event_type): continue
