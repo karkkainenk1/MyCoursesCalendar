@@ -10,8 +10,6 @@ output_file_name = 'output.ics'
 ##################
 
 
-course_names = {}
-
 def main():
     cal_text = urllib2.urlopen(calendar_url).read()
     cal_input = Calendar.from_ical(cal_text, True)
@@ -34,7 +32,7 @@ def main():
 def generate_event_description(course_code, event_type, event_room, course_name):
     description = course_code + " " + event_type
     if len(event_room) > 0: description += ", " + event_room
-    description +=" (" + course_name + ")"
+    description += " (" + course_name + ")"
     return description
 
 def should_ignore_event_type(event_type):
@@ -56,6 +54,7 @@ def parse_event_room(event):
     if ', ' in orig_summary: event_room = orig_summary.split(", ")[1].split(" ")[0]
     return event_room
 
+course_names = {}
 def get_course_name(course_code):
     course_name = ""
     if course_names.has_key(course_code): 
