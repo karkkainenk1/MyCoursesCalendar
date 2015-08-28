@@ -10,7 +10,6 @@ else:
     from urllib2 import urlopen
     from urllib2 import URLError
 
-ignore_problem_sessions = True
 course_names = {}
 
 
@@ -36,7 +35,7 @@ def open_url(url):
     return data
 
 
-def main(url, output):
+def main(url, output, include_problem_sessions):
     cal_text = open_url(url)
 
     cal_input = Calendar.from_ical(cal_text, True)
@@ -44,7 +43,7 @@ def main(url, output):
 
     for event in cal_input[0].walk('vevent'):
         event_type = parse_event_type(event)
-        if should_ignore_event_type(event_type):
+        if should_ignore_event_type(event_type, include_problem_sessions):
             continue
 
         course_code = parse_course_code(event)
@@ -66,8 +65,8 @@ def generate_event_description(course_code, event_type, event_room, course_name)
     return description
 
 
-def should_ignore_event_type(event_type):
-    return ignore_problem_sessions and event_type[0] == 'H'
+def should_ignore_event_type(event_type, include_problem_sessions):
+    return not include_problem_sessions and event_type[0] == 'H'
 
 
 def parse_course_code(event):
@@ -106,6 +105,8 @@ def get_course_name(course_code):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", "-U", help="MyCourses Calendar URL", required=True)
-    parser.add_argument("output_file", help="Output iCal calendar file")
+    parser.add_argument("--output", "-O", help="Output iCal calendar file, default is output.ics", default="output.ics")
+    parser.add_argument("--include-problem-sessions", "-P", help="Include also the problem sessions. Note that it will add all of the different sessions, not just the one you have signed up for.", dest="include_problem_sessions", action="store_true")
+    parser.set_defaults(include_problem_sessions=False)
     args = parser.parse_args()
-    main(args.url, args.output_file)
+    main(args.url, args.output, args.include_problem_sessions)
