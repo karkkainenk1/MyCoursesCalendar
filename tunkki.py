@@ -11,8 +11,8 @@ else:
     from urllib2 import URLError
 
 
-def main(url, output, include_exercise_sessions):
-    cal_text = open_url(url)
+def main(url, output_file_name, include_exercise_sessions):
+    cal_text = read_url(url)
 
     cal_input = Calendar.from_ical(cal_text, True)
     cal_output = Calendar()
@@ -29,11 +29,11 @@ def main(url, output, include_exercise_sessions):
         event['summary'] = generate_event_description(course_code, event_type, event_room, course_name)
         cal_output.add_component(event)
 
-    with open(output, 'wb') as output_calendar:
-        output_calendar.write(cal_output.to_ical())
+    with open(output_file_name, 'wb') as output_file:
+        output_file.write(cal_output.to_ical())
 
 
-def open_url(url):
+def read_url(url):
     if sys.version_info > (3, 0, 0):
         with urlopen(url) as remote_calendar:
             if remote_calendar.status != 200:
@@ -94,7 +94,7 @@ def get_course_name(course_code):
     if course_code in course_names:
         course_name = course_names.get(course_code)
     else:
-        search_page = urlopen('https://mycourses.aalto.fi/course/search.php?search=' + course_code).read()
+        search_page = read_url('https://mycourses.aalto.fi/course/search.php?search=' + course_code)
         soup = BeautifulSoup(search_page, "html.parser")
         course_name = soup.find('span', {'class': 'coursename'}).text.split(" - ")[1].split(", ")[0]
         course_names[course_code] = course_name
