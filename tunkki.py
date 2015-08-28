@@ -10,7 +10,27 @@ else:
     from urllib2 import urlopen
     from urllib2 import URLError
 
-course_names = {}
+
+def main(url, output, include_problem_sessions):
+    cal_text = open_url(url)
+
+    cal_input = Calendar.from_ical(cal_text, True)
+    cal_output = Calendar()
+
+    for event in cal_input[0].walk('vevent'):
+        event_type = parse_event_type(event)
+        course_code = parse_course_code(event)
+        event_room = parse_event_room(event)
+        course_name = get_course_name(course_code)
+        
+        if should_ignore_event_type(event_type, include_problem_sessions):
+            continue
+
+        event['summary'] = generate_event_description(course_code, event_type, event_room, course_name)
+        cal_output.add_component(event)
+
+    with open(output, 'wb') as output_calendar:
+        output_calendar.write(cal_output.to_ical())
 
 
 def open_url(url):
@@ -33,29 +53,7 @@ def open_url(url):
             remote_calendar.close()
 
     return data
-
-
-def main(url, output, include_problem_sessions):
-    cal_text = open_url(url)
-
-    cal_input = Calendar.from_ical(cal_text, True)
-    cal_output = Calendar()
-
-    for event in cal_input[0].walk('vevent'):
-        event_type = parse_event_type(event)
-        if should_ignore_event_type(event_type, include_problem_sessions):
-            continue
-
-        course_code = parse_course_code(event)
-        event_room = parse_event_room(event)
-        course_name = get_course_name(course_code)
-
-        event['summary'] = generate_event_description(course_code, event_type, event_room, course_name)
-        cal_output.add_component(event)
-
-    with open(output, 'wb') as output_calendar:
-        output_calendar.write(cal_output.to_ical())
-
+    
 
 def generate_event_description(course_code, event_type, event_room, course_name):
     description = course_code + " " + event_type
@@ -86,9 +84,11 @@ def parse_event_room(event):
     event_room = ""
     if ', ' in orig_summary:
         event_room = orig_summary.split(", ")[1].split(" ")[0]
+        
     return event_room
 
 
+course_names = {}
 def get_course_name(course_code):
     course_name = ""
     if course_code in course_names:
