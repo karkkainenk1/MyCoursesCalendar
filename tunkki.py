@@ -11,7 +11,7 @@ else:
     from urllib2 import URLError
 
 
-def main(url, output, include_problem_sessions):
+def main(url, output, include_exercise_sessions):
     cal_text = open_url(url)
 
     cal_input = Calendar.from_ical(cal_text, True)
@@ -23,7 +23,7 @@ def main(url, output, include_problem_sessions):
         event_room = parse_event_room(event)
         course_name = get_course_name(course_code)
         
-        if should_ignore_event_type(event_type, include_problem_sessions):
+        if should_ignore_event_type(event_type, include_exercise_sessions):
             continue
 
         event['summary'] = generate_event_description(course_code, event_type, event_room, course_name)
@@ -63,8 +63,8 @@ def generate_event_description(course_code, event_type, event_room, course_name)
     return description
 
 
-def should_ignore_event_type(event_type, include_problem_sessions):
-    return not include_problem_sessions and event_type[0] == 'H'
+def should_ignore_event_type(event_type, include_exercise_sessions):
+    return not include_exercise_sessions and event_type[0] == 'H'
 
 
 def parse_course_code(event):
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", "-U", help="MyCourses Calendar URL", required=True)
     parser.add_argument("--output", "-O", help="Output iCal calendar file, default is output.ics", default="output.ics")
-    parser.add_argument("--include-problem-sessions", "-P", help="Include also the problem sessions. Note that it will add all of the different sessions, not just the one you have signed up for.", dest="include_problem_sessions", action="store_true")
-    parser.set_defaults(include_problem_sessions=False)
+    parser.add_argument("--include-exercise-sessions", "-P", help="Include also the exercise sessions. Note that it will add all of the different sessions, not just the one you have signed up for.", dest="include_exercise_sessions", action="store_true")
+    parser.set_defaults(include_exercise_sessions=False)
     args = parser.parse_args()
-    main(args.url, args.output, args.include_problem_sessions)
+    main(args.url, args.output, args.include_exercise_sessions)

@@ -8,6 +8,6 @@ Before using this script you should install BeautifulSoup (pip install beautiful
 First, get your personal calendar URL from https://mycourses.aalto.fi/calendar/export.php by choosing a suitable time period and clicking the "Get subscription URL" button. Then, go to the same folder with this script and execute the following command:
 <pre>python tunkki.py --url your-url-here</pre>
 
-By default, this script will ignore the problem sessions. The reason for this is that the original calendar includes all the possible sessions instead of just the ones that you have signed up for, so your calendar will get filled with unwanted events. If you really want to include the problem sessions also, just add the parameter --include-problem-sessions after the command.
+By default, this script will ignore the exercise sessions. The reason for this is that the original calendar includes all the possible sessions instead of just the ones that you have signed up for, so your calendar will get filled with unwanted events. If you really want to include the exercise sessions also, just add the parameter --include-exercise-sessions after the command.
 
 The output file will be output.ics by default, and it can be changed with the parameter --output anotherfile.ics .
